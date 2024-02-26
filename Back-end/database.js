@@ -1,18 +1,17 @@
 const mysql = require('mysql2');
 
-const conexion = mysql.createConnection({
-    host:"mysql-keniaescamilla.alwaysdata.net",
-    user:"345342_je",
-    password:"1234561331",
-    database:"keniaescamilla_arduino",
+const conexion = mysql.createConnection({host:"localhost",
+    user:"root",
+    password:"",
+    database:"sm52_arduino",
 
 });
 
 conexion.connect((error) => {
     if(error){
-    console.error("error al conectarse con la BD",error);
+    console.error("error askdjaksad",error);
 }else{
-    console.log("conexion exitosa a la BD");
+    console.log("conexcion sisisisi");
 }
 });
 module.exports = conexion;

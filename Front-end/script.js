@@ -16,41 +16,81 @@ $(document).ready(function () {
         options: {},
     });
 
+    var ctx2 = document.getElementById("sensorPir").getContext("2d");
+    var chart2 = new Chart(ctx2, {
+        type: "line",
+        data: {
+            labels: [],
+            datasets: [
+                {
+                    label: "Pir",
+                    backgroundColor: "rgb(51, 141, 255)",
+                    borderColor: "rgb(93, 164, 255)",
+                    data: [],
+                },
+            ],
+        },
+        options: {},
+    });
+
     function fetchData() {
         $.ajax({
-            url: "http://localhost:8080/api/practica", // Aquí se actualiza la URL para que apunte a tu API
+            url: "http://localhost:8080/api/practica",
             type: "GET",
             success: function (data) {
-                var labels = [];
-                var sensorData = [];
+                var ultrasonicoLabels = [];
+                var ultrasonicoData = [];
+                var pirLabels = [];
+                var pirData = [];
 
                 data.forEach(function(row) {
-                    labels.push(row.Led_color);
-                    sensorData.push(parseFloat(row.Mensaje));
+                    ultrasonicoLabels.push(row.Led_color);
+                    ultrasonicoData.push(parseFloat(row.Mensaje));
+
+                    pirLabels.push(row.fecha); // Ajusta si 'fecha' es la propiedad correcta
+                    pirData.push(parseFloat(row.pir_led)); // Ajusta si 'Dato_sensor' es la propiedad correcta
                 });
-                chart.data.labels = labels;
-                chart.data.datasets[0].data = sensorData;
+
+                chart.data.labels = ultrasonicoLabels;
+                chart.data.datasets[0].data = ultrasonicoData;
                 chart.update();
 
-                var led1 = document.getElementById("led1");
-                var led2 = document.getElementById("led2");
-                var led3 = document.getElementById("led3");
+                chart2.data.labels = pirLabels;
+                chart2.data.datasets[0].data = pirData;
+                chart2.update();
 
+                // Lógica para manejar las imágenes SVG del sensor PIR
+                var ultimoEstadoPIR = data[0].pir_led;
+                var pirr1 = document.getElementById("pirr1");
+
+                if (ultimoEstadoPIR == 0) {
+                    pirr1.src = "img/sinmov.svg";
+                } else if (ultimoEstadoPIR == 1) {
+                    pirr1.src = "img/conmov.svg";
+                }
+
+                // Lógica para manejar las imágenes SVG del sensor ultrasónico
                 var lastColor = data[0].Led_color;
-                console.log(lastColor);
+                var led0 = document.getElementById("led0");
+                // var led1 = document.getElementById("led1");
+                // var led2 = document.getElementById("led2");
+                // var led3 = document.getElementById("led3");
 
                 if (lastColor === "rojo") {
-                    led1.src = "img/VERDE-OFF.svg";
-                    led2.src = "img/AMARILLO-OFF.svg";
-                    led3.src = "img/ROJO-ON.svg";
+                    led0.src = "img/NUEVOROJO-ON.svg";
+                    // led1.src = "img/VERDE-OFF.svg";
+                    // led2.src = "img/AMARILLO-OFF.svg";
+                    // led3.src = "img/ROJO-ON.svg";
                 } else if (lastColor === "amarillo") {
-                    led1.src = "img/VERDE-OFF.svg";
-                    led2.src = "img/AMARILLO-ON.svg";
-                    led3.src = "img/ROJO-OFF.svg";
+                    led0.src = "img/NUEVOAMARILLO-ON.svg";
+                    // led1.src = "img/VERDE-OFF.svg";
+                    // led2.src = "img/AMARILLO-ON.svg";
+                    // led3.src = "img/ROJO-OFF.svg";
                 } else if (lastColor === "verde") {
-                    led1.src = "img/VERDE-ON.svg";
-                    led2.src = "img/AMARILLO-OFF.svg";
-                    led3.src = "img/ROJO-OFF.svg";
+                    led0.src = "img/NUEVOVERDE-ON.svg";
+                    // led1.src = "img/VERDE-ON.svg";
+                    // led2.src = "img/AMARILLO-OFF.svg";
+                    // led3.src = "img/ROJO-OFF.svg";
                 }
             },
         });
